@@ -12,6 +12,19 @@ class ViewController: UIViewController {
         //collection view'i protocollere bağlıyacağız
         CollectionView.dataSource = self
         CollectionView.delegate = self
+        //tasarım değişkeni CollectionView'in hücrelerinin nasıl düzenleyeceğini tanımlayan bir layout olacak.
+        let tasarım:UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        //tasrım'ı UICollectionViewFlowLayout nesnesi olarak oluşturduk şimdi CollectionView'e atayacağız.
+        CollectionView.collectionViewLayout = tasarım
+        //CollectionView in genişliğini bellirle
+        let genislik = self.CollectionView.frame.size.width
+        //Kenar boşlukları verilmeli
+        tasarım.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        //Hücre genişliği ve boyunu belirliyeceğiz
+        tasarım.itemSize = CGSize(width: (genislik-25)/2, height: ((genislik-25)/2)*(2.2))
+        //arada kalan boşlukları belirleyelim
+        tasarım.minimumLineSpacing = 5
+        tasarım.minimumInteritemSpacing = 5
         //Filmler sınıfından nesnelerimizi oluşturuyoruz
         let f1 = Filmler(filmId: 1, filmBaslik: "The Pianist", filmResimAdi: "thepianist", filmFiyat: 14.50)
         let f2 = Filmler(filmId: 2, filmBaslik: "Bir Zamanlar Anadolu", filmResimAdi: "birzamanlaranadoluda", filmFiyat: 18.50)
@@ -31,7 +44,7 @@ class ViewController: UIViewController {
 
 }
 // Gerekli protokolleri extension yolu ile ekliyeceğiz
-extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
+extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource,FilmHucreProtocol{
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1 //1 bölümden oluşucak
     }
@@ -46,6 +59,21 @@ extension ViewController:UICollectionViewDelegate,UICollectionViewDataSource{
         cell.labelFilmAdi.text = film.filmBaslik!
         cell.labelFilmFiyati.text = "\(film.filmFiyat!) TL"
         cell.FilmResim.image = UIImage(named: film.filmResimAdi!)
+        //cell i FilmHucreProtocol'e bağlıcaz
+        cell.hucreProtocol = self
+        //FilmHücredeki dğeişkene ulaşarak burdaki değişkeni atıyacağız
+        cell.indexPath = indexPath
+        //hücrelerin çevresini tasarlıcaz
+        
+        
         return cell
+    }
+    func sepeteEkle(indexPath: IndexPath) {
+        let film = filmlerListesi[indexPath.row]
+        print("\(film.filmBaslik!) filmi sepete eklediniz.")
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let film = filmlerListesi[indexPath.row]
+        print("\(film.filmBaslik!) adlı hücreye tıklandı.")
     }
 }
